@@ -1,1 +1,1 @@
-conda create --name "deep_learning" python=3.9.18 -y
+conda create --name "tpot" python=3.9.18 -y
