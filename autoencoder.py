@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -8,12 +9,29 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
 import sys
 
-if len(sys.argv) == 2:
+path = '/home/thiago/projects/deep_learning/Trabalho-de-deep-learning/datasets/data'
+
+if len(sys.argv) == 3:
     encoding_dim = int(sys.argv[1])
+    month = int(sys.argv[2])
+elif len(sys.argv) == 2:
+    encoding_dim = int(sys.argv[1])
+    month = 9 # setembro
 else:
     encoding_dim = 10
+    month = 9 # setembro
+
+data_path_mapping = {
+    7: "jul",
+    8: "ago",
+    9: "set",
+}
+
+month_str = data_path_mapping[month]
+data_path = f"{path}/{month_str}_2024.csv"
 
 print (f"Using encoding_dim = {encoding_dim}")
+print (f"Encoding data from month = {month_str}")
 
 # Define the autoencoder
 def build_autoencoder(input_dim, encoding_dim):
@@ -40,14 +58,9 @@ def scale_data(data):
     scaled_data = scaler.fit_transform(data)
     return scaled_data, scaler
 
-path = '/home/thiago/projects/deep_learning/Trabalho-de-deep-learning/datasets/data'
-data_path_set = f"{path}/set_2024.csv"
-data_path_ago = f"{path}/ago_2024.csv"
-data_path_jul = f"{path}/jul_2024.csv"
 
-set_data = pd.read_csv(data_path_set)
-#ago_data = pd.read_csv(data_path_ago)
-#jul_data = pd.read_csv(data_path_jul)
+
+set_data = pd.read_csv(data_path)
 #data_concat = pd.concat([set_data, ago_data, jul_data], ignore_index=True)
 data_concat = set_data
 print("Tamanho do dataset combinado:", data_concat.shape)
@@ -126,8 +139,12 @@ autoencoder.fit(
 latent_representations = encoder.predict(X_train)
 
 # Save the latent representations to a CSV file
-filename = f"latent_representations_{encoding_dim}.csv"
+folder = f"latent/{month_str}"
+filepath = f"{folder}/{month_str}_latent_{encoding_dim}.csv"
 latent_df = pd.DataFrame(latent_representations, columns=[f"Feature_{i}" for i in range(encoding_dim)])
-latent_df.to_csv(filename, index=False)
+if not os.path.isdir(folder):
+    os.mkdir(folder)
 
-print(f"Latent representations saved to {filename}")
+latent_df.to_csv(filepath, index=False)
+
+print(f"Latent representations saved to {filepath}")
