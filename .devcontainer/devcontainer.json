@@ -8,13 +8,13 @@
     "ms-toolsai.jupyter",
     "github.copilot"
   ],
-  "postCreateCommand": "apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 && ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime",
+  "postCreateCommand": "apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 htop && ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime",
   "mounts": [
     "source=${localWorkspaceFolder}/..,target=/workspace,type=bind"
   ],
   "runArgs": [
     "--gpus",
-    "all"
+    "all",
   ],
   "containerEnv": {
     "NVIDIA_VISIBLE_DEVICES": "all",
